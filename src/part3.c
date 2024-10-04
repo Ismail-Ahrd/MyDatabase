@@ -1,10 +1,3 @@
-/* #include <stdio.h>      // For printf, getline
-#include <stdlib.h>     // For malloc, realloc, free, exit, EXIT_SUCCESS
-#include <string.h>     // For strcmp
-#include <unistd.h>     // For STDIN_FILENO (optional, not used here but often included for I/O operations)
-#include <stdbool.h>    // For the bool type and true/false macros
-#include <cstdint> */
-
 #include <stdio.h>      // For printf, getline
 #include <stdlib.h>     // For malloc, realloc, free, exit, EXIT_SUCCESS
 #include <string.h>     // For strcmp, strncmp
@@ -46,11 +39,17 @@ typedef struct {
   Row row_to_insert; //only used by insert statement
 } Statement;
 
+//define a macro that gets the size of an attribute in a struct
+//(Struct*)0 cast the value 0 to a pointer of type Struct*, the pointer point to a memory address of 0
+//but no memory access will actually happen (it is used just to have an imaginary Struct in the address
+//0 to access the Attribute and gets his size).
 #define size_of_attribute(Struct, Attribute) sizeof(((Struct*)0)->Attribute)
 
 const uint32_t ID_SIZE = size_of_attribute(Row, id);
 const uint32_t USERNAME_SIZE = size_of_attribute(Row, username);
 const uint32_t EMAIL_SIZE = size_of_attribute(Row, email);
+//Offset refers to the byte position of a specific attribute within a row. 
+//It tells you where each attribute starts relative to the beginning of the row.
 const uint32_t ID_OFFSET = 0;
 const uint32_t USERNAME_OFFSET = ID_OFFSET + ID_SIZE;
 const uint32_t EMAIL_OFFSET = USERNAME_OFFSET + USERNAME_SIZE;
@@ -71,23 +70,30 @@ void print_row(Row* row) {
   printf("(%d, %s, %s)\n", row->id, row->username, row->email);
 }
 
+//Convert a row into a flat byte representation suitable for storage.
 void serialize_row(Row* source, void* destination) {
   memcpy(destination + ID_OFFSET, &(source->id), ID_SIZE);
   memcpy(destination + USERNAME_OFFSET, &(source->username), USERNAME_SIZE);
   memcpy(destination + EMAIL_OFFSET, &(source->email), EMAIL_SIZE);
 }
 
+//Converts the flat byte representation back into a Row structure for use within the program.
 void deserialize_row(void *source, Row* destination) {
   memcpy(&(destination->id), source + ID_OFFSET, ID_SIZE);
   memcpy(&(destination->username), source + USERNAME_OFFSET, USERNAME_SIZE);
   memcpy(&(destination->email), source + EMAIL_OFFSET, EMAIL_SIZE);
 }
 
+//retreive a pointer to specific row.
 void* row_slot(Table* table, uint32_t row_num) {
+  //calcluate the page number.
   uint32_t page_num = row_num / ROWS_PER_PAGE;
+  //retreive the page.
   void *page = table->pages[page_num];
   if (page == NULL) {
-    // Allocate memory only when we try to access page
+    // Allocate memory only when we try to access page.
+    //If the page is not already allocated (i.e., page is NULL), 
+    //allocate memory for that page using malloc(PAGE_SIZE) and update the pages array.
     page = table->pages[page_num] = malloc(PAGE_SIZE);
   }
   uint32_t row_offset = row_num % ROWS_PER_PAGE;
@@ -112,6 +118,7 @@ void free_table(Table* table) {
 }
 
 InputBuffer* new_input_buffer() {
+  //Allocate the input buffer dynamicly in the memory
   InputBuffer* input_buffer = (InputBuffer*)malloc(sizeof(InputBuffer));
 
   // Check if memory allocation was successful
@@ -142,6 +149,8 @@ void read_input(InputBuffer* input_buffer) {
 
   // Ignore trailing newline
   input_buffer->input_length = bytes_read - 1;
+  // Replace the \n charachter at the end of the buffer with a null terminator '\0'
+  // This converts the buffer into a valid null-terminated string that can be safely used in C
   input_buffer->buffer[bytes_read - 1] = 0;
 }
 
@@ -253,3 +262,16 @@ int main(int argc, char* argv[]) {
   }
   return 0;
 }
+
+// Where are we righ now?
+// First, we create a new input buffer to hold user input, the input buffer is a struct of: 
+// buffer which is a pointer to the buffer, an buffer_length and input_length
+// Then we create a new Table, it is a struct of num_rows and pages: a pointer to pages where we will store the rows 
+// Then, we read the user input an put it in the buffer.
+// Then, we check if the user input is meta command (starts with .) if yes we execute the command
+// If no we call the prepare statement function (can be considered as the compiler)
+// based on user input we create a statement (insert or select), a statement is a struct composed of:
+// type(StatementType) and rows_to_insert(only used by insert statement). The function returns prepare result
+// if it is success we call the execute statement function, this function executes the statement based on
+// it's type (insert or select)
+// For now we just have a single table with a defined row, and the data is only stored in the memory.
