@@ -2,3 +2,4 @@
 /tests/
 /lib/ 
 /build/
+*/node_modules
