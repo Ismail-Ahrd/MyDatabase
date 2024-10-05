@@ -2,7 +2,6 @@ const { spawnSync } = require('child_process');
 
 describe('database', () => {
   function runScript(commands) {
-    // Run the "./db" program using child_process.spawnSync
     const process = spawnSync('../build/part3', [], { input: commands.join('\n'), encoding: 'utf-8' });
 
     // The stdout will contain the output from the program
