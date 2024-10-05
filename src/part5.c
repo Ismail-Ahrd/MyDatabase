@@ -86,8 +86,16 @@ void print_row(Row* row) {
 //Convert a row into a flat byte representation suitable for storage.
 void serialize_row(Row* source, void* destination) {
   memcpy(destination + ID_OFFSET, &(source->id), ID_SIZE);
-  memcpy(destination + USERNAME_OFFSET, &(source->username), USERNAME_SIZE);
-  memcpy(destination + EMAIL_OFFSET, &(source->email), EMAIL_SIZE);
+  // If we wanted to ensure that all bytes are initialized, it would suffice to use strncpy instead of memcpy while 
+  // copying the username and email fields of rows in serialize_row
+  // With memcpy: If the src shorter than its allocated size memcpy will only copy the actual characters without 
+  // padding the remaining bytes  but strncpy pads the remaining bytes with null characters, 
+  // ensuring that all bytes in the destination buffer are initialized.
+  
+  //memcpy(destination + USERNAME_OFFSET, &(source->username), USERNAME_SIZE);
+  //memcpy(destination + EMAIL_OFFSET, &(source->email), EMAIL_SIZE);
+  strncpy(destination + USERNAME_OFFSET, source->username, USERNAME_SIZE);
+  strncpy(destination + EMAIL_OFFSET, source->email, EMAIL_SIZE);
 }
 
 //Converts the flat byte representation back into a Row structure for use within the program.
