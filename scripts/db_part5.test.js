@@ -1,6 +1,12 @@
 const { spawnSync } = require('child_process');
 
 describe('database', () => {
+  beforeAll(() => {
+    const dbFilePath = 'test.db';
+    if (fs.existsSync(dbFilePath)) {
+      fs.unlinkSync(dbFilePath);
+    }
+  });
   function runScript(commands) {
     const process = spawnSync('../build/part5', ['test.db'], { input: commands.join('\n'), encoding: 'utf-8' });
 
