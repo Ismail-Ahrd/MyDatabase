@@ -10,7 +10,7 @@ describe('database', () => {
   });
 
   function runScript(commands) {
-    const process = spawnSync('../build/part10', ['test.db'], { input: commands.join('\n'), encoding: 'utf-8' });
+    const process = spawnSync('../build/part11', ['test.db'], { input: commands.join('\n'), encoding: 'utf-8' });
 
     // The stdout will contain the output from the program
     const rawOutput = process.stdout;
@@ -22,7 +22,7 @@ describe('database', () => {
     const script = Array.from({ length: 14 }, (_, i) => `insert ${i + 1} user${i + 1} person${i + 1}@example.com`);
     script.push('.btree');
     script.push('insert 15 user15 person15@example.com');
-    script.push('.exit');
+    script.push('.exit ');
 
     const result = runScript(script);
     expect(result.slice(14)).toEqual([
