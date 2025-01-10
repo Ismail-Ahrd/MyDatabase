@@ -5,3 +5,5 @@
 */node_modules
 mydb.db
 */test.db
+bin
+obj
