@@ -91,3 +91,13 @@ void* get_page(Pager* pager, uint32_t page_num) {
 
   return pager->pages[page_num];
 }
+
+/*
+  For now, we’re assuming that in a database with N pages, page numbers 0 through N-1 are allocated. 
+  Therefore we can always allocate page number N for new pages. Eventually after we implement deletion, 
+  some pages may become empty and their page numbers unused. To be more efficient, 
+  we could re-allocate those free pages.
+*/
+uint32_t get_unused_page_num(Pager* pager) { 
+  return pager->num_pages; 
+}
