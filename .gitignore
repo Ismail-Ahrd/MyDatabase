@@ -2,3 +2,6 @@
 /tests/
 /lib/ 
 /build/
+*/node_modules
+mydb.db
+*/test.db
