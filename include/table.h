@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "sql_compiler.h"
+#include "pager.h"
 
 #define size_of_attribute(Struct, Attribute) sizeof(((Struct*)0)->Attribute)
 
@@ -16,19 +17,9 @@
 
 #define ROW_SIZE (ID_SIZE + USERNAME_SIZE + EMAIL_SIZE)
 
-#define PAGE_SIZE 4096
-#define TABLE_MAX_PAGES 100
 #define ROWS_PER_PAGE (PAGE_SIZE / ROW_SIZE)
 #define TABLE_MAX_ROWS (ROWS_PER_PAGE * TABLE_MAX_PAGES)
 #define INVALID_PAGE_NUM UINT32_MAX
-
-// The Pager accesses the page cache and the file. 
-typedef struct {
-  int file_descriptor;
-  uint32_t file_length;
-  uint32_t num_pages;
-  void* pages[TABLE_MAX_PAGES];
-} Pager;
 
 // The Table object makes requests for pages through the pager.
 typedef struct {
@@ -38,5 +29,6 @@ typedef struct {
 } Table;
 
 void db_close(Table* table);
+Table* db_open(const char* filename);
 
 #endif
