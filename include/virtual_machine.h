@@ -1,8 +1,10 @@
 #ifndef VIRTUAL_MACHINE_H
 #define VIRTUAL_MACHINE_H
 
+#include "utils.h"
 #include "input_buffer.h"
-#include "table.h"
+#include "sql_compiler.h"
+#include "cursor.h"
 
 typedef enum { 
   EXECUTE_SUCCESS, 
@@ -15,6 +17,7 @@ typedef enum {
   META_COMMAND_UNRECOGNIZED_COMMAND
 } MetaCommandResult;
 
-//MetaCommandResult do_meta_command(InputBuffer* input_buffer, Table *table);
+MetaCommandResult do_meta_command(InputBuffer* input_buffer, Table *table);
+ExecuteResult execute_statement(Statement* statement, Table* table);
 
 #endif

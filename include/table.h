@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "sql_compiler.h"
-#include "pager.h"
+#include "b+tree.h"
 
 #define size_of_attribute(Struct, Attribute) sizeof(((Struct*)0)->Attribute)
 
@@ -30,5 +30,6 @@ typedef struct {
 
 void db_close(Table* table);
 Table* db_open(const char* filename);
+void create_new_root(Table* table, uint32_t right_child_page_num);
 
 #endif

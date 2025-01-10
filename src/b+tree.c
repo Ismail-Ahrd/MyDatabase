@@ -137,6 +137,11 @@ uint32_t internal_node_find_child(void* node, uint32_t key) {
   return min_index;
 }
 
+void update_internal_node_key(void* node, uint32_t old_key, uint32_t new_key) {
+  uint32_t old_child_index = internal_node_find_child(node, old_key);
+  *internal_node_key(node, old_child_index) = new_key;
+}
+
 uint32_t* leaf_node_num_cells(void* node) {
   return node + LEAF_NODE_NUM_CELLS_OFFSET;
 }

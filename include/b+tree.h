@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
+#include "pager.h"
 #include "table.h"
 
 typedef enum { NODE_INTERNAL, NODE_LEAF } NodeType;
@@ -61,6 +63,7 @@ uint32_t* internal_node_child(void* node, uint32_t child_num);
 uint32_t* internal_node_key(void* node, uint32_t key_num);
 
 uint32_t internal_node_find_child(void* node, uint32_t key);
+void update_internal_node_key(void* node, uint32_t old_key, uint32_t new_key);
 
 uint32_t* leaf_node_num_cells(void* node);
 uint32_t* leaf_node_next_leaf(void* node);

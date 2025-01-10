@@ -2,7 +2,6 @@
 #define CURSOR_H
  
 #include "table.h"
-#include "b+tree.h"
 
 
 typedef struct {
