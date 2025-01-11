@@ -25,7 +25,7 @@ typedef struct {
 typedef struct {
   StatementType type;
   Row row_to_insert; //only used by insert statement
-  uint32_t id_to_select; // only used by select one
+  uint32_t id_to_select; // only used by select one statement
 } Statement;
 
 PrepareResult prepare_insert(InputBuffer* input_buffer, Statement* statement);

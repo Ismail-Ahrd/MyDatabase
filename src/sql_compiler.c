@@ -66,7 +66,7 @@ PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement)
   if (strncmp(input_buffer->buffer, "insert", 6) == 0) {
     return prepare_insert(input_buffer, statement);
   }
-
+  // select where id = <value>
   if (strncmp(input_buffer->buffer, "select where", 12) == 0) {
     return prepare_select_one(input_buffer, statement);
   }
