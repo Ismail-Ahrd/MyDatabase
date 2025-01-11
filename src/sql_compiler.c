@@ -35,10 +35,40 @@ PrepareResult prepare_insert(InputBuffer* input_buffer, Statement* statement) {
   return PREPARE_SUCCESS;
 }
 
+PrepareResult prepare_select_one(InputBuffer* input_buffer, Statement* statement) {
+  statement->type = STATEMENT_SELECT_ONE;
+
+  // Check if the query matches the expected format
+  char* keyword = strtok(input_buffer->buffer, " ");
+  char* where_clause = strtok(NULL, " ");
+  char* id_clause = strtok(NULL, "=");
+
+  if (where_clause == NULL || id_clause == NULL || strcmp(where_clause, "where") != 0 || strcmp(id_clause, "id") != 0) {
+    return PREPARE_SYNTAX_ERROR;
+  }
+
+  char* id_string = strtok(NULL, " ");
+  if (id_string == NULL) {
+    return PREPARE_SYNTAX_ERROR;
+  }
+
+  int id = atoi(id_string);
+  if (id < 0) {
+    return PREPARE_NEGATIVE_ID;
+  }
+
+  statement->id_to_select = id;
+  return PREPARE_SUCCESS;
+}
+
 //This is the SQL compiler
 PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement) {
   if (strncmp(input_buffer->buffer, "insert", 6) == 0) {
     return prepare_insert(input_buffer, statement);
+  }
+
+  if (strncmp(input_buffer->buffer, "select where", 12) == 0) {
+    return prepare_select_one(input_buffer, statement);
   }
 
   if (strcmp(input_buffer->buffer, "select") == 0) {

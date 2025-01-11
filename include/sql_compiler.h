@@ -12,7 +12,7 @@ typedef enum {
     PREPARE_STRING_TOO_LONG
 } PrepareResult;
 
-typedef enum { STATEMENT_INSERT, STATEMENT_SELECT } StatementType;
+typedef enum { STATEMENT_INSERT, STATEMENT_SELECT, STATEMENT_SELECT_ONE } StatementType;
 
 #define COLUMN_USERNAME_SIZE 32
 #define COLUMN_EMAIL_SIZE 255
@@ -25,6 +25,7 @@ typedef struct {
 typedef struct {
   StatementType type;
   Row row_to_insert; //only used by insert statement
+  uint32_t id_to_select; // only used by select one
 } Statement;
 
 PrepareResult prepare_insert(InputBuffer* input_buffer, Statement* statement);

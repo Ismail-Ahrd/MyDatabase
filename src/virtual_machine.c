@@ -323,11 +323,28 @@ ExecuteResult execute_insert(Statement* statement, Table* table) {
   return EXECUTE_SUCCESS;
 }
 
+ExecuteResult execute_select_one(Statement* statement, Table* table) {
+  uint32_t key_to_find = statement->id_to_select;
+  Cursor* cursor = table_find(table, key_to_find);
+  Row row;
+
+  deserialize_row(cursor_value(cursor), &row);
+  if (row.id == 0) {
+    free(cursor);
+    return EXECUTE_KEY_NOT_FOUND;
+  }
+  print_row(&row);
+  free(cursor);
+  return EXECUTE_SUCCESS;
+}
+
 ExecuteResult execute_statement(Statement* statement, Table* table) {
   switch (statement->type) {
     case STATEMENT_INSERT:
       return execute_insert(statement, table);
     case STATEMENT_SELECT:
       return execute_select(statement, table);
+    case STATEMENT_SELECT_ONE:
+      return execute_select_one(statement, table);
   }
 }
